@@ -1,0 +1,175 @@
+/* --- Global Page Setup (Assuming page-container is used in App.jsx) --- */
+.page-container {
+    background-color: #0d0d0d;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* --- Main Content Container (Wraps all About content) --- */
+.about-main-content {
+    max-width: 1000px;
+    margin: 20px auto 40px;
+    padding: 0 20px;
+    color: #f0f0f0;
+    flex-grow: 1; 
+}
+
+/* --- Hero Section & Title --- */
+.about-hero-section {
+    padding: 60px 0;
+    text-align: center;
+    border-bottom: 5px solid #cc0000; /* Signature Red line */
+    margin-bottom: 40px;
+}
+
+.about-page-title {
+    font-family: 'Times New Roman', serif;
+    font-size: 3rem;
+    font-weight: 800;
+    color: #ffffff;
+    line-height: 1.2;
+    margin: 0;
+}
+
+/* --- Core Content Sections (Mission/History/Values) --- */
+.about-content-section {
+    display: flex;
+    gap: 40px;
+    margin-bottom: 50px;
+}
+
+.content-block {
+    flex: 1;
+}
+
+.section-heading {
+    font-family: 'Arial', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #cc0000; /* Red emphasis */
+    text-transform: uppercase;
+    border-bottom: 2px solid #333;
+    padding-bottom: 5px;
+    margin-bottom: 20px;
+}
+
+.about-text {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: #b0b0b0;
+    margin-bottom: 25px;
+}
+
+.values-list {
+    list-style: none;
+    padding: 0;
+}
+
+.values-list li {
+    background-color: #1e1e1e; /* Darker box for values */
+    padding: 15px;
+    margin-bottom: 10px;
+    border-left: 5px solid #ffaa00; /* Secondary accent color */
+    border-radius: 4px;
+    font-size: 1rem;
+}
+.values-list li strong {
+    color: #ffffff;
+    font-weight: 700;
+    display: block;
+    margin-bottom: 5px;
+}
+
+/* --- Team Section --- */
+.team-section {
+    margin-bottom: 60px;
+    text-align: center;
+}
+.team-heading {
+    text-align: left;
+}
+
+.team-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+    margin-top: 30px;
+    text-align: left;
+}
+
+.team-member-card {
+    background-color: #1a1a1a;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    border-top: 3px solid #cc0000;
+}
+
+.member-photo {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 15px;
+    border: 3px solid #444;
+}
+
+.member-name {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0 0 5px;
+}
+
+.member-title {
+    color: #ffaa00; /* Secondary color for title */
+    font-size: 0.9rem;
+    font-style: italic;
+    margin-bottom: 15px;
+}
+
+.member-bio {
+    color: #b0b0b0;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+/* --- Contact CTA --- */
+.contact-cta {
+    text-align: center;
+    padding: 30px;
+    background-color: #1e1e1e;
+    border-radius: 8px;
+    border: 1px dashed #444;
+}
+
+.cta-link {
+    color: #cc0000;
+    font-weight: 700;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+.cta-link:hover {
+    color: #ff4d4d;
+    text-decoration: underline;
+}
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 768px) {
+    .about-content-section {
+        flex-direction: column;
+        gap: 20px;
+    }
+    .about-page-title {
+        font-size: 2.2rem;
+    }
+    .about-hero-section {
+        padding: 40px 0;
+    }
+}
+@media (max-width: 500px) {
+    .about-main-content {
+        padding: 0 10px;
+    }
+}

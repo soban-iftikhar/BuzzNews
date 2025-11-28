@@ -1,0 +1,81 @@
+/* ---------------------- Contact Page Styles ---------------------- */
+
+/* Contact Form Layout */
+.contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    margin-top: 10px;
+}
+
+/* Input Fields */
+.contact-input,
+.contact-textarea {
+    background-color: #1a1a1a;
+    border: 1px solid #333;
+    padding: 12px 15px;
+    color: #ffffff;
+    font-size: 1rem;
+    border-radius: 5px;
+    transition: border-color 0.2s ease;
+}
+
+.contact-input::placeholder,
+.contact-textarea::placeholder {
+    color: #777;
+}
+
+/* On Focus */
+.contact-input:focus,
+.contact-textarea:focus {
+    border-color: #cc0000;
+    outline: none;
+}
+
+/* Submit Button */
+.contact-submit-btn {
+    background-color: #cc0000;
+    color: #ffffff;
+    padding: 14px;
+    border: none;
+    border-radius: 5px;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.25s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.contact-submit-btn:hover {
+    background-color: #ff1a1a;
+}
+
+/* CTA block (reuses your theme but polished) */
+.contact-cta {
+    margin-top: 50px;
+    padding: 30px;
+    background-color: #1e1e1e;
+    border-radius: 8px;
+    border: 1px dashed #444;
+    text-align: center;
+}
+
+/* CTA link hover consistency */
+.contact-cta .cta-link:hover {
+    color: #ff4d4d;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .contact-form {
+        gap: 14px;
+    }
+    .contact-input,
+    .contact-textarea {
+        font-size: 0.95rem;
+    }
+    .contact-submit-btn {
+        font-size: 0.95rem;
+    }
+}
