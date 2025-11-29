@@ -1,15 +1,110 @@
+
+import { useState, useEffect } from "react"
 import Header from "../Components/Header"
 import Footer from "../Components/Footer"
+import NewsCard from "../Components/NewsCard"
 
-const Favourites = () => {
+const Favorites = () => {
+  const [favorites, setFavorites] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+
+  const API_BASE_URL = "http://localhost:8000"
+
+  const fetchFavorites = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+
+      // Note: You may need to add user authentication/user_id parameter
+      const response = await fetch(`${API_BASE_URL}/api/favorites`)
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch favorites: ${response.statusText}`)
+      }
+
+      const data = await response.json()
+      setFavorites(data.favorites || [])
+    } catch (err) {
+      console.error("[v0] Error fetching favorites:", err)
+      setError("Failed to load favorites.")
+      setFavorites([])
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchFavorites()
+  }, [])
+
+  if (loading) {
+    return (
+      <>
+        <Header />
+        <div className="page-container">
+          <main className="main-content">
+            <h2 style={{ marginTop: "20px", marginBottom: "20px" }}>My Favorite Articles</h2>
+            <div style={{ textAlign: "center", padding: "40px", fontSize: "16px" }}>Loading favorites...</div>
+          </main>
+        </div>
+        <Footer />
+      </>
+    )
+  }
+
   return (
-     <>
-    <Header />
+    <>
+      <Header />
+      <div className="page-container">
+        <main className="main-content">
+          <h2 style={{ marginTop: "20px", marginBottom: "20px" }}>My Favorite Articles</h2>
 
-    <Footer />
-    
+          {error && (
+            <div
+              style={{
+                padding: "15px",
+                backgroundColor: "#ffe6e6",
+                color: "#cc0000",
+                borderRadius: "4px",
+                marginBottom: "20px",
+              }}
+            >
+              {error}
+            </div>
+          )}
+
+          {favorites.length > 0 ? (
+            <section className="news-grid-section">
+              <div className="news-grid">
+                {favorites.map((article) => (
+                  <NewsCard key={article.id} article={article} />
+                ))}
+              </div>
+            </section>
+          ) : (
+            <div
+              style={{
+                textAlign: "center",
+                padding: "40px 20px",
+                minHeight: "400px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                flexDirection: "column",
+              }}
+            >
+              <h3 style={{ fontSize: "24px", marginBottom: "10px" }}>No Favorites Yet</h3>
+              <p style={{ fontSize: "16px", color: "#666" }}>
+                Start adding articles to your favorites to see them here.
+              </p>
+            </div>
+          )}
+        </main>
+      </div>
+      <Footer />
     </>
   )
 }
 
-export default Favourites
+export default Favorites

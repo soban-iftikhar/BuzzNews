@@ -1,130 +1,124 @@
-import React from "react";
-// Components from src/Components/
-import Header from "../Components/Header";
-import Footer from "../Components/Footer";
-import NewsCard from "../Components/NewsCard";
-// Import styles for the page layout (Hero, Grid)
-import "../Styles/Home.css";
+import { useState, useEffect } from "react"
+import Header from "../Components/Header"
+import Footer from "../Components/Footer"
+import NewsCard from "../Components/NewsCard"
 
-const mockArticles = [
-  // Keeping image source empty/mock, relying on the 'onerror' fallback in NewsCard.jsx
-  {
-    id: 1,
-    title: "Global Markets Surge Amidst Tech Sector Recovery",
-    summary:
-      "Optimism returns as major indices post record gains, driven by strong quarterly reports from leading technology companies.",
-    image: "/n1.jpeg",
-    date: "5 hours ago",
-    category: "Business",
-  },
-  {
-    id: 2,
-    title: "Local Elections See Record Voter Turnout",
-    summary:
-      "A new generation of voters mobilized for local races, signaling a shift in municipal political priorities.",
-    image: "/n2.jpeg",
-    date: "Yesterday",
-    category: "Politics",
-  },
-  {
-    id: 3,
-    title: "New Discovery Unlocks Secrets of Deep-Sea Life",
-    summary:
-      "Scientists confirm the existence of rare species in the abyssal zone, challenging previous assumptions about extreme ecosystems.",
-    image: "/n3.jpeg",
-    date: "1 day ago",
-    category: "Science",
-  },
-  {
-    id: 4,
-    title: "The Rise of Urban Farming: A Sustainable Solution?",
-    summary:
-      "Exploring how vertical farms are transforming city landscapes and tackling food security challenges globally.",
-    image: "/n4.jpeg",
-    date: "3 hours ago",
-    category: "Environment",
-  },
-  {
-    id: 5,
-    title: "Cultural Festival Highlights Regional Music Diversity",
-    summary:
-      "The annual festival attracted thousands, featuring unique performances and celebrating local heritage.",
-    image: "/n5.jpeg",
-    date: "8 hours ago",
-    category: "Culture",
-  },
-  {
-    id: 6,
-    title: "New Safety Regulations Impact Auto Manufacturing",
-    summary:
-      "The latest government mandates require significant changes to vehicle design, focusing on pedestrian safety.",
-    image: "/n6.jpeg",
-    date: "2 days ago",
-    category: "Technology",
-  },
-];
+import "../Styles/Home.css"
 
-const heroArticle = {
-  title: "Exclusive: Global Leaders Meet for Emergency Climate Summit",
-  summary:
-    "In a historic and unplanned session, delegates from twenty nations convened to discuss unprecedented heat waves and rising sea levels, promising immediate and radical policy changes.",
-  image: "", // Empty for API fetch, relies on fallback
-  author: "Jane Smith",
-  date: "1 hour ago",
-  category: "World News",
-};
+const API_BASE_URL = "http://localhost:8000"
 
 const Home = () => {
+  const [heroArticle, setHeroArticle] = useState(null)
+  const [articles, setArticles] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true)
+        setError(null)
+
+        // Fetch hero article
+        const heroRes = await fetch(`${API_BASE_URL}/api/news/featured`)
+        if (!heroRes.ok) throw new Error("Failed to fetch featured article")
+        const heroData = await heroRes.json()
+        setHeroArticle(heroData)
+
+        // Fetch articles for the grid
+        const articlesRes = await fetch(`${API_BASE_URL}/api/news`)
+        if (!articlesRes.ok) throw new Error("Failed to fetch articles")
+        const articlesData = await articlesRes.json()
+        setArticles(articlesData)
+      } catch (err) {
+        setError(err.message)
+        console.error("Error fetching data:", err)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchData()
+  }, [])
+
   return (
-    // page-container ensures content is centered and footer is always at the bottom
     <div className="page-container">
       <Header />
       <main className="main-content">
         {/* --- Hero Section: Large Featured Story --- */}
-        <section className="hero-section">
-          <div className="hero-content">
-            <p className="hero-category">{heroArticle.category}</p>
-            <h2 className="hero-title">{heroArticle.title}</h2>
-            <p className="hero-summary">{heroArticle.summary}</p>
-            <div className="hero-meta">
-              <span>By {heroArticle.author}</span>
-              <span className="separator">|</span>
-              <span>{heroArticle.date}</span>
+        {loading ? (
+          <section className="hero-section">
+            <div className="hero-content">
+              <p className="hero-category">Loading...</p>
+              <h2 className="hero-title">Fetching latest news...</h2>
             </div>
-          </div>
-          <div className="hero-image-container">
-            <img
-              src={
-                // avoid passing an empty string — use fallback if falsy
-                heroArticle.image ||
-                "https://placehold.co/1200x600/cc0000/ffffff?text=BREAKING+NEWS"
-              }
-              alt={heroArticle.title}
-              className="hero-image"
-              onError={(e) => {
-                e.currentTarget.onerror = null;
-                e.currentTarget.src =
-                  "https://placehold.co/1200x600/cc0000/ffffff?text=BREAKING+NEWS";
-              }}
-            />
-          </div>
-        </section>
+          </section>
+        ) : error ? (
+          <section className="hero-section">
+            <div className="hero-content">
+              <p className="hero-category">Error</p>
+              <h2 className="hero-title">Unable to load featured article</h2>
+              <p>{error}</p>
+            </div>
+          </section>
+        ) : heroArticle ? (
+          <section className="hero-section">
+            <div className="hero-content">
+              <p className="hero-category">{heroArticle.category}</p>
+              <h2 className="hero-title">{heroArticle.title}</h2>
+              <p className="hero-summary">{heroArticle.summary}</p>
+              <div className="hero-meta">
+                <span>By {heroArticle.author}</span>
+                <span className="separator">|</span>
+                <span>{heroArticle.date}</span>
+              </div>
+            </div>
+            <div className="hero-image-container">
+              <img
+                src={
+                  heroArticle.image ||
+                  "https://placehold.co/1200x600/cc0000/ffffff?text=BREAKING+NEWS" ||
+                  "/placeholder.svg"
+                }
+                alt={heroArticle.title}
+                className="hero-image"
+                onError={(e) => {
+                  e.currentTarget.onerror = null
+                  e.currentTarget.src = "https://placehold.co/1200x600/cc0000/ffffff?text=BREAKING+NEWS"
+                }}
+              />
+            </div>
+          </section>
+        ) : null}
 
         <h3 className="section-title">Latest Updates</h3>
 
-        {/* --- News Grid Section: Renders the NewsCard components --- */}
+        {/* --- News Grid Section --- */}
         <section className="news-grid-section">
-          <div className="news-grid">
-            {/* The conditional check ensures the NewsCard component receives an 'article' prop */}
-            {mockArticles.map((article) => (
-              <NewsCard key={article.id} article={article} />
-            ))}
-          </div>
+          {loading ? (
+            <div style={{ textAlign: "center", padding: "40px" }}>
+              <p>Loading articles...</p>
+            </div>
+          ) : error ? (
+            <div style={{ textAlign: "center", padding: "40px" }}>
+              <p>Unable to load articles: {error}</p>
+            </div>
+          ) : articles.length === 0 ? (
+            <div style={{ textAlign: "center", padding: "40px" }}>
+              <p>No articles available at the moment.</p>
+            </div>
+          ) : (
+            <div className="news-grid">
+              {articles.map((article) => (
+                <NewsCard key={article.id} article={article} />
+              ))}
+            </div>
+          )}
         </section>
       </main>
       <Footer />
     </div>
-  );
-};
+  )
+}
 
-export default Home;
+export default Home

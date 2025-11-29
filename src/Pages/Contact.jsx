@@ -31,10 +31,6 @@ const Contact = () => {
             <div className="content-block">
               <h2 className="section-heading">Get In Touch</h2>
 
-              <p className="about-text">
-                Reach out directly for press requests business deals or newsroom submissions.
-              </p>
-
               <ul className="values-list">
                 <li>
                   <strong>Email</strong>
