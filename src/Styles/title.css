@@ -1,0 +1,31 @@
+.page-container {
+  background-color: #0d0d0d;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+.main-content {
+  min-width: 60%;
+  margin: 20px auto 40px;
+  padding: 0 20px;
+  color: #f0f0f0;
+  flex-grow: 1;
+}
+.hero-section {
+  justify-content: center;
+  background-color: #0d0d0d;
+  padding: 60px 0;
+  text-align: center;
+  border-bottom: 5px solid #cc0000;
+  margin-bottom: 40px;
+  border-radius: 10px;
+}
+
+.page-title {
+  font-family: "Times New Roman", serif;
+  font-size: 3rem;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.2;
+  margin: 0;
+}

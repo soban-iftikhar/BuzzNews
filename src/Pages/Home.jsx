@@ -76,9 +76,7 @@ const Home = () => {
             <div className="hero-image-container">
               <img
                 src={
-                  heroArticle.image ||
-                  "https://placehold.co/1200x600/cc0000/ffffff?text=BREAKING+NEWS" ||
-                  "/placeholder.svg"
+                  heroArticle.image 
                 }
                 alt={heroArticle.title}
                 className="hero-image"

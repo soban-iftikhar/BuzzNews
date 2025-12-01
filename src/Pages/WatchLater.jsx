@@ -2,6 +2,8 @@ import { useState, useEffect } from "react"
 import Header from "../Components/Header"
 import Footer from "../Components/Footer"
 import NewsCard from "../Components/NewsCard"
+import "../Styles/title.css"
+
 
 const WatchLater = () => {
   const [watchLaterItems, setWatchLaterItems] = useState([])
@@ -43,7 +45,9 @@ const WatchLater = () => {
         <Header />
         <div className="page-container">
           <main className="main-content">
-            <h2 style={{ marginTop: "20px", marginBottom: "20px" }}>Watch Later</h2>
+             <section className="hero-section">
+            <h1 className="page-title">Watch Later</h1>
+          </section>
             <div style={{ textAlign: "center", padding: "40px", fontSize: "16px" }}>Loading items...</div>
           </main>
         </div>
@@ -57,7 +61,9 @@ const WatchLater = () => {
       <Header />
       <div className="page-container">
         <main className="main-content">
-          <h2 style={{ marginTop: "20px", marginBottom: "20px" }}>Watch Later</h2>
+           <section className="hero-section">
+            <h1 className="page-title">Watch Later</h1>
+          </section>
 
           {error && (
             <div

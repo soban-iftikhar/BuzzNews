@@ -1,65 +1,52 @@
-import { useState, useEffect } from "react"
-import Header from "../Components/Header"
-import Footer from "../Components/Footer"
-import NewsCard from "../Components/NewsCard"
+import { useState, useEffect } from "react";
+import Header from "../Components/Header";
+import Footer from "../Components/Footer";
+import NewsCard from "../Components/NewsCard";
+import "../Styles/title.css";
 
 const Newsfeed = () => {
-  const [articles, setArticles] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
+  const [articles, setArticles] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const API_BASE_URL = "http://localhost:8000"
+  const API_BASE_URL = "http://localhost:8000";
 
   const fetchNews = async () => {
     try {
-      setLoading(true)
-      setError(null)
+      setLoading(true);
+      setError(null);
 
-      const response = await fetch(`${API_BASE_URL}/api/news`)
+      const response = await fetch(`${API_BASE_URL}/api/news`);
 
       if (!response.ok) {
-        throw new Error(`Failed to fetch news: ${response.statusText}`)
+        throw new Error(`Failed to fetch news: ${response.statusText}`);
       }
 
-      const data = await response.json()
-      setArticles(data.articles || [])
+      const data = await response.json();
+      setArticles(data.articles || []);
     } catch (err) {
-      console.error("[v0] Error fetching news:", err)
-      setError("Failed to fetch news. Please try again.")
-      setArticles([])
+      console.error("[v0] Error fetching news:", err);
+      setError("Failed to fetch news. Please try again.");
+      setArticles([]);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
-    fetchNews()
-  }, [])
+    fetchNews();
+  }, []);
 
   return (
     <>
       <Header />
       <div className="page-container">
         <main className="main-content">
-          <div style={{ marginTop: "20px", marginBottom: "20px" }}>
-            <h2 style={{ marginBottom: "15px" }}>News Feed</h2>
-            <button
-              onClick={fetchNews}
-              disabled={loading}
-              style={{
-                padding: "8px 16px",
-                backgroundColor: "#cc0000",
-                color: "white",
-                border: "none",
-                borderRadius: "4px",
-                cursor: loading ? "not-allowed" : "pointer",
-                fontSize: "14px",
-                opacity: loading ? 0.6 : 1,
-              }}
-            >
-              {loading ? "Loading..." : "Refresh News"}
-            </button>
-          </div>
+          
+            <section className="hero-section">
+              <h1 className="page-title">News Feed</h1>
+            </section>
+           
 
           {error && (
             <div
@@ -105,15 +92,19 @@ const Newsfeed = () => {
                 flexDirection: "column",
               }}
             >
-              <h3 style={{ fontSize: "24px", marginBottom: "10px" }}>No Articles Available</h3>
-              <p style={{ fontSize: "16px", color: "#666" }}>Try refreshing to get the latest news.</p>
+              <h3 style={{ fontSize: "24px", marginBottom: "10px" }}>
+                No Articles Available
+              </h3>
+              <p style={{ fontSize: "16px", color: "#666" }}>
+                Try refreshing to get the latest news.
+              </p>
             </div>
           )}
         </main>
       </div>
       <Footer />
     </>
-  )
-}
+  );
+};
 
-export default Newsfeed
+export default Newsfeed;

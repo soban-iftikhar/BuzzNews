@@ -11,12 +11,11 @@ const About = () => {
 
         <main className="about-main-content">
 
-          {/* Hero Section */}
+        
           <section className="about-hero-section">
             <h1 className="about-page-title">About BuzzNews</h1>
           </section>
 
-          {/* Mission + Who We Are */}
           <section className="about-content-section">
             <div className="content-block">
               <h2 className="section-heading">Our Mission</h2>

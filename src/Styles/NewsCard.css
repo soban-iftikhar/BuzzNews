@@ -164,3 +164,52 @@
     font-size: 1.2rem;
   }
 }
+
+
+
+.card-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+}
+
+/* added styles for save buttons */
+.save-btn {
+  background-color: #2a2a2a;
+  color: #b0b0b0;
+  border: 1px solid #444;
+  padding: 8px 10px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+}
+
+.save-btn:hover {
+  background-color: #333;
+  color: #ffffff;
+  border-color: #555;
+}
+
+.save-btn.active {
+  background-color: #cc0000;
+  color: white;
+  border-color: #ff4d4d;
+}
+
+.save-btn.active:hover {
+  background-color: #ff4d4d;
+}
+
+.favorite-btn.active {
+  background-color: #cc0000;
+}
+
+.watchlater-btn.active {
+  background-color: #cc0000;
+}
