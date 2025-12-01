@@ -5,12 +5,10 @@ import { useNavigate } from "react-router-dom"
 import Header from "../Components/Header"
 import Footer from "../Components/Footer"
 import NewsCard from "../Components/NewsCard"
-import { useAuth } from "../Hooks/useAuth"
 import "../Styles/title.css"
 
 const Favorites = () => {
   const navigate = useNavigate()
-  const { isAuthenticated, token } = useAuth()
   const [favorites, setFavorites] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -18,7 +16,8 @@ const Favorites = () => {
   const API_BASE_URL = "http://localhost:8000"
 
   useEffect(() => {
-    if (!isAuthenticated) {
+    const token = localStorage.getItem("token")
+    if (!token) {
       navigate("/login")
       return
     }
@@ -41,7 +40,6 @@ const Favorites = () => {
         const data = await response.json()
         setFavorites(data.favorites || [])
       } catch (err) {
-        console.error("[v0] Error fetching favorites:", err)
         setError("Failed to load favorites.")
         setFavorites([])
       } finally {
@@ -50,7 +48,7 @@ const Favorites = () => {
     }
 
     fetchFavorites()
-  }, [isAuthenticated, token, navigate])
+  }, [navigate])
 
   if (loading) {
     return (

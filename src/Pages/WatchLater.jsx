@@ -5,12 +5,10 @@ import { useNavigate } from "react-router-dom"
 import Header from "../Components/Header"
 import Footer from "../Components/Footer"
 import NewsCard from "../Components/NewsCard"
-import { useAuth } from "../Hooks/useAuth"
 import "../Styles/title.css"
 
 const WatchLater = () => {
   const navigate = useNavigate()
-  const { isAuthenticated, token } = useAuth()
   const [watchLaterItems, setWatchLaterItems] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -18,7 +16,8 @@ const WatchLater = () => {
   const API_BASE_URL = "http://localhost:8000"
 
   useEffect(() => {
-    if (!isAuthenticated) {
+    const token = localStorage.getItem("token")
+    if (!token) {
       navigate("/login")
       return
     }
@@ -41,7 +40,6 @@ const WatchLater = () => {
         const data = await response.json()
         setWatchLaterItems(data.watch_later || [])
       } catch (err) {
-        console.error("[v0] Error fetching watch later items:", err)
         setError("Failed to load watch later items.")
         setWatchLaterItems([])
       } finally {
@@ -50,7 +48,7 @@ const WatchLater = () => {
     }
 
     fetchWatchLater()
-  }, [isAuthenticated, token, navigate])
+  }, [navigate])
 
   if (loading) {
     return (

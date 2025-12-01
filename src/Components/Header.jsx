@@ -3,11 +3,21 @@
 import { Rss, Star, Clock, Home, Info, Mail, LogOut, LogIn } from "lucide-react"
 import "../Styles/Header.css"
 import { NavLink, Link, useNavigate } from "react-router-dom"
-import { useAuth } from "../Hooks/useAuth"
+import { useState, useEffect } from "react"
 
 const Header = () => {
-  const { isAuthenticated, logout, user } = useAuth()
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [user, setUser] = useState(null)
   const navigate = useNavigate()
+
+  useEffect(() => {
+    const token = localStorage.getItem("token")
+    const userData = localStorage.getItem("user")
+    if (token) {
+      setIsAuthenticated(true)
+      setUser(userData ? JSON.parse(userData) : null)
+    }
+  }, [])
 
   const navItems = [
     { name: "Home", path: "/", icon: Home },
@@ -19,7 +29,10 @@ const Header = () => {
   ]
 
   const handleLogout = () => {
-    logout()
+    localStorage.removeItem("token")
+    localStorage.removeItem("user")
+    setIsAuthenticated(false)
+    setUser(null)
     navigate("/")
   }
 

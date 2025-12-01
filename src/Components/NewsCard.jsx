@@ -3,7 +3,6 @@
 import { useState } from "react"
 import { Clock, ExternalLink, ChevronDown, ChevronUp, Star, BookmarkPlus } from "lucide-react"
 import "../Styles/NewsCard.css"
-import { useAuth } from "../Hooks/useAuth"
 import LoginPromptModal from "./LoginPromptModal"
 
 const NewsCard = ({ article }) => {
@@ -14,7 +13,8 @@ const NewsCard = ({ article }) => {
   const [favoriteLoading, setFavoriteLoading] = useState(false)
   const [watchLaterLoading, setWatchLaterLoading] = useState(false)
 
-  const { isAuthenticated, token } = useAuth()
+  const token = localStorage.getItem("token")
+  const isAuthenticated = !!token
 
   const imageUrl = article.urlToImage || "https://placehold.co/600x400/333333/cccccc?text=NO+IMAGE"
 
@@ -54,7 +54,7 @@ const NewsCard = ({ article }) => {
         setIsFavorite(!isFavorite)
       }
     } catch (err) {
-      console.error("[v0] Error adding to favorites:", err)
+      console.error("Error adding to favorites:", err)
     } finally {
       setFavoriteLoading(false)
     }
@@ -81,7 +81,7 @@ const NewsCard = ({ article }) => {
         setIsWatchLater(!isWatchLater)
       }
     } catch (err) {
-      console.error("[v0] Error adding to watch later:", err)
+      console.error("Error adding to watch later:", err)
     } finally {
       setWatchLaterLoading(false)
     }
