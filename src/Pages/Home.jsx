@@ -1,8 +1,9 @@
+"use client"
+
 import { useState, useEffect } from "react"
 import Header from "../Components/Header"
 import Footer from "../Components/Footer"
 import NewsCard from "../Components/NewsCard"
-
 import "../Styles/Home.css"
 
 const API_BASE_URL = "http://localhost:8000"
@@ -25,14 +26,16 @@ const Home = () => {
         const heroData = await heroRes.json()
         setHeroArticle(heroData)
 
-        // Fetch articles for the grid
-        const articlesRes = await fetch(`${API_BASE_URL}/api/news`)
+        // Fetch articles for the grid - limit to 6
+        const articlesRes = await fetch(`${API_BASE_URL}/api/news?limit=6`)
         if (!articlesRes.ok) throw new Error("Failed to fetch articles")
         const articlesData = await articlesRes.json()
-        setArticles(articlesData)
+        // Ensure we only display 6 articles
+        const limitedArticles = Array.isArray(articlesData.articles) ? articlesData.articles.slice(0, 6) : []
+        setArticles(limitedArticles)
       } catch (err) {
         setError(err.message)
-        console.error("Error fetching data:", err)
+        console.error("[v0] Error fetching data:", err)
       } finally {
         setLoading(false)
       }
@@ -75,9 +78,7 @@ const Home = () => {
             </div>
             <div className="hero-image-container">
               <img
-                src={
-                  heroArticle.image 
-                }
+                src={heroArticle.image || "/placeholder.svg"}
                 alt={heroArticle.title}
                 className="hero-image"
                 onError={(e) => {
@@ -91,7 +92,7 @@ const Home = () => {
 
         <h3 className="section-title">Latest Updates</h3>
 
-        {/* --- News Grid Section --- */}
+        {/* --- News Grid Section: Exactly 6 Cards --- */}
         <section className="news-grid-section">
           {loading ? (
             <div style={{ textAlign: "center", padding: "40px" }}>

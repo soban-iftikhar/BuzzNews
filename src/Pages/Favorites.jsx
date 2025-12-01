@@ -1,44 +1,56 @@
+"use client"
 
 import { useState, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
 import Header from "../Components/Header"
 import Footer from "../Components/Footer"
 import NewsCard from "../Components/NewsCard"
+import { useAuth } from "../Hooks/useAuth"
 import "../Styles/title.css"
 
-
 const Favorites = () => {
+  const navigate = useNavigate()
+  const { isAuthenticated, token } = useAuth()
   const [favorites, setFavorites] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
   const API_BASE_URL = "http://localhost:8000"
 
-  const fetchFavorites = async () => {
-    try {
-      setLoading(true)
-      setError(null)
-
-      // Note: You may need to add user authentication/user_id parameter
-      const response = await fetch(`${API_BASE_URL}/api/favorites`)
-
-      if (!response.ok) {
-        throw new Error(`Failed to fetch favorites: ${response.statusText}`)
-      }
-
-      const data = await response.json()
-      setFavorites(data.favorites || [])
-    } catch (err) {
-      console.error("[v0] Error fetching favorites:", err)
-      setError("Failed to load favorites.")
-      setFavorites([])
-    } finally {
-      setLoading(false)
-    }
-  }
-
   useEffect(() => {
+    if (!isAuthenticated) {
+      navigate("/login")
+      return
+    }
+
+    const fetchFavorites = async () => {
+      try {
+        setLoading(true)
+        setError(null)
+
+        const response = await fetch(`${API_BASE_URL}/api/favorites`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+
+        if (!response.ok) {
+          throw new Error(`Failed to fetch favorites: ${response.statusText}`)
+        }
+
+        const data = await response.json()
+        setFavorites(data.favorites || [])
+      } catch (err) {
+        console.error("[v0] Error fetching favorites:", err)
+        setError("Failed to load favorites.")
+        setFavorites([])
+      } finally {
+        setLoading(false)
+      }
+    }
+
     fetchFavorites()
-  }, [])
+  }, [isAuthenticated, token, navigate])
 
   if (loading) {
     return (
@@ -46,9 +58,9 @@ const Favorites = () => {
         <Header />
         <div className="page-container">
           <main className="main-content">
-             <section className="hero-section">
-            <h1 className="page-title">Favorites</h1>
-          </section>
+            <section className="hero-section">
+              <h1 className="page-title">Favorites</h1>
+            </section>
             <div style={{ textAlign: "center", padding: "40px", fontSize: "16px" }}>Loading favorites...</div>
           </main>
         </div>
@@ -62,7 +74,7 @@ const Favorites = () => {
       <Header />
       <div className="page-container">
         <main className="main-content">
-           <section className="hero-section">
+          <section className="hero-section">
             <h1 className="page-title">Favorites</h1>
           </section>
 
