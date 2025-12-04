@@ -7,6 +7,7 @@ import Contact from "./Pages/Contact"
 import Favorites from "./Pages/Favorites"
 import Login from "./Pages/Login"
 import Signup from "./Pages/Signup"
+import CreateArticle from "./Pages/CreateArticle"
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/create-article" element={<CreateArticle />} />
       </Routes>
     </BrowserRouter>
   )

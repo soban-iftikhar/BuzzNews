@@ -1,8 +1,8 @@
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-
 }
 .navbar {
   background-color: #1a1a1a;
@@ -22,18 +22,17 @@ html, body {
   display: inline-block;
   letter-spacing: -1px;
   cursor: pointer;
-  line-height: 1; 
+  line-height: 1;
 }
 .navbar h1 .buzz {
-  color: #cc0000; 
+  color: #cc0000;
   font-weight: 900;
 }
 .navbar h1 .news {
-  font-family: "Times New Roman", serif; 
+  font-family: "Times New Roman", serif;
   font-style: italic;
   font-weight: 400;
 }
-
 
 .nav-list {
   display: flex;
@@ -41,7 +40,7 @@ html, body {
   list-style: none;
   padding: 0;
   margin: 0;
-  background-color: #2c2c2c; 
+  background-color: #2c2c2c;
   border-top: 1px solid #444;
   justify-content: center;
   padding-bottom: 1rem;
@@ -49,7 +48,6 @@ html, body {
 
 /* --- Navigation Links --- */
 .nav-list li a {
-  
   display: flex;
   align-items: center;
   gap: 8px; /* Space between icon and text */
@@ -105,5 +103,52 @@ html, body {
   }
 }
 
+/* Add auth button styles to match original navbar design */
+.nav-list li button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 18px;
+  color: #f0f0f0;
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
 
+.nav-list li button:hover {
+  background-color: #383838;
+  color: #ff4d4d;
+}
 
+/* Auth user info styling */
+.auth-user-info {
+  display: flex;
+  align-items: center;
+  padding: 12px 18px;
+  color: #f0f0f0;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.username {
+  color: #b0b0b0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+@media (max-width: 768px) {
+  .nav-list li button {
+    padding: 10px 15px;
+    font-size: 0.75rem;
+  }
+
+  .username {
+    display: none;
+  }
+}

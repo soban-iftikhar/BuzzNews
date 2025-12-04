@@ -1,6 +1,6 @@
 "use client"
 
-import { Rss, Star, Clock, Home, Info, Mail, LogOut, LogIn } from "lucide-react"
+import { Rss, Star, Clock, Home, Info, Mail, LogOut, LogIn, PenTool } from "lucide-react"
 import "../Styles/Header.css"
 import { NavLink, Link, useNavigate } from "react-router-dom"
 import { useState, useEffect } from "react"
@@ -8,6 +8,7 @@ import { useState, useEffect } from "react"
 const Header = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [user, setUser] = useState(null)
+  const [isAdmin, setIsAdmin] = useState(false)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -15,7 +16,14 @@ const Header = () => {
     const userData = localStorage.getItem("user")
     if (token) {
       setIsAuthenticated(true)
-      setUser(userData ? JSON.parse(userData) : null)
+      if (userData) {
+        const parsedUser = JSON.parse(userData)
+        setUser(parsedUser)
+        const adminEmails = ["admin@newsbuzz.com", "admin@example.com"]
+        if (adminEmails.includes(parsedUser.email) || parsedUser.is_admin) {
+          setIsAdmin(true)
+        }
+      }
     }
   }, [])
 
@@ -33,6 +41,7 @@ const Header = () => {
     localStorage.removeItem("user")
     setIsAuthenticated(false)
     setUser(null)
+    setIsAdmin(false)
     navigate("/")
   }
 
@@ -62,11 +71,19 @@ const Header = () => {
 
         {isAuthenticated ? (
           <>
+            {isAdmin && (
+              <li>
+                <NavLink to="/create-article" className={({ isActive }) => (isActive ? "active" : "")}>
+                  <PenTool className="nav-icon" size={16} />
+                  <span>Write</span>
+                </NavLink>
+              </li>
+            )}
             <li className="auth-user-info">
               <span className="username">{user?.username || user?.email}</span>
             </li>
             <li>
-              <button onClick={handleLogout} className="auth-btn logout-btn">
+              <button onClick={handleLogout} className="logout-btn">
                 <LogOut size={16} />
                 <span>Logout</span>
               </button>
@@ -75,13 +92,13 @@ const Header = () => {
         ) : (
           <>
             <li>
-              <NavLink to="/login" className="auth-btn login-btn">
+              <NavLink to="/login" className="">
                 <LogIn size={16} />
                 <span>Login</span>
               </NavLink>
             </li>
             <li>
-              <NavLink to="/signup" className="auth-btn signup-btn">
+              <NavLink to="/signup" className="">
                 <span>Sign Up</span>
               </NavLink>
             </li>
