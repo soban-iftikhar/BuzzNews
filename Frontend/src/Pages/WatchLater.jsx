@@ -15,6 +15,32 @@ const WatchLater = () => {
 
   const API_BASE_URL = "http://localhost:8000"
 
+  // NEW DELETE HANDLER
+  const handleRemoveWatchLater = async (watchLaterId) => {
+    const token = localStorage.getItem("token")
+    if (!token) return navigate("/login")
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/watchlater/${watchLaterId}`, {
+            method: "DELETE",
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        })
+
+        if (!response.ok) {
+            throw new Error("Failed to remove watch later item.")
+        }
+
+        // OPTIMISTIC UI UPDATE: Remove the item from the state immediately
+        setWatchLaterItems(prev => prev.filter(item => item.id !== watchLaterId))
+        console.log(`Removed watch later ID: ${watchLaterId}`)
+
+    } catch (err) {
+        setError(err.message || "Could not remove item from watch later.")
+    }
+}
+
   useEffect(() => {
     const token = localStorage.getItem("token")
     if (!token) {
@@ -27,18 +53,22 @@ const WatchLater = () => {
         setLoading(true)
         setError(null)
 
-        const response = await fetch(`${API_BASE_URL}/api/watch-later`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
+      // FIX: URL is correct: /api/watchlater/
+      const response = await fetch(`${API_BASE_URL}/api/watchlater/`, { 
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
 
         if (!response.ok) {
           throw new Error(`Failed to fetch watch later items: ${response.statusText}`)
         }
 
         const data = await response.json()
-        setWatchLaterItems(data.watch_later || [])
+        
+        // CRITICAL FIX: The FastAPI endpoint returns the array directly
+        setWatchLaterItems(Array.isArray(data) ? data : [])
+
       } catch (err) {
         setError("Failed to load watch later items.")
         setWatchLaterItems([])
@@ -93,8 +123,14 @@ const WatchLater = () => {
           {watchLaterItems.length > 0 ? (
             <section className="news-grid-section">
               <div className="news-grid">
-                {watchLaterItems.map((article) => (
-                  <NewsCard key={article.id} article={article} />
+                {watchLaterItems.map((item) => (
+                  // Map over the saved item and use the nested article object for NewsCard
+                  <NewsCard 
+                    key={item.id} 
+                    article={item.article} 
+                    onRemove={handleRemoveWatchLater} // Pass the delete handler
+                    savedItemId={item.id} // Pass the WatchLater ID
+                  />
                 ))}
               </div>
             </section>

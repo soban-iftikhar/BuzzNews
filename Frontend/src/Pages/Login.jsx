@@ -3,6 +3,9 @@
 import { useState } from "react"
 import { useNavigate, Link } from "react-router-dom"
 import "../Styles/Auth.css"
+// NOTE: I am not using the AuthContext in this file,
+// which is a potential architecture issue (token not updating global state),
+// but we are fixing the immediate Local Storage bug first.
 
 const Login = () => {
   const navigate = useNavigate()
@@ -32,7 +35,14 @@ const Login = () => {
       }
 
       const data = await response.json()
-      localStorage.setItem("token", data.token)
+      
+      // -----------------------------------------------------------------
+      // FIX 1: ACCESS THE CORRECT KEY (data.access_token)
+      // FIX 2: We should ideally call the `login` function from AuthContext here,
+      // but for the immediate fix, we'll write to Local Storage correctly.
+      localStorage.setItem("token", data.access_token) // <-- CORRECTED!
+      // -----------------------------------------------------------------
+      
       localStorage.setItem("user", JSON.stringify(data.user))
       navigate("/")
     } catch (err) {

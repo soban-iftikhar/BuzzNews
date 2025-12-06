@@ -1,4 +1,160 @@
-/* Add user action buttons styling */
+/* --- NewsCard Main Container --- */
+.news-card {
+    background-color: #1a1a1a; /* Dark gray for the card background */
+    border: 1px solid #333; /* Subtle border */
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: 100%; /* Important for grid alignment */
+}
+
+.news-card:hover {
+    transform: translateY(-5px); /* Lift effect on hover */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+}
+
+/* --- Image and Source Area --- */
+.card-image-wrapper {
+    position: relative;
+    width: 100%;
+    /* Aspect ratio for the image: 3 parts height for every 4 parts width */
+    padding-top: 75%; 
+    overflow: hidden;
+}
+
+.card-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.card-source {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    background-color: #cc0000; /* Matching news theme red */
+    color: #fff;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* --- Content Area --- */
+.card-content {
+    padding: 20px;
+    flex-grow: 1; /* Ensures content takes remaining space, pushing actions/meta down */
+    display: flex;
+    flex-direction: column;
+}
+
+.card-title {
+    font-family: 'Times New Roman', serif;
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: #f0f0f0;
+    margin-bottom: 10px;
+    line-height: 1.3;
+}
+
+.card-summary {
+    color: #b0b0b0;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-bottom: 15px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    /* transition: max-height 0.3s ease-out; */ /* Disabled due to potential height complexity in a grid */
+}
+
+/* Limit the height/lines for the collapsed state */
+.card-summary.collapsed {
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* Show up to 3 lines in collapsed view */
+    -webkit-box-orient: vertical;
+}
+
+.card-content-text {
+    font-size: 0.9rem;
+    color: #999;
+    margin-top: 10px;
+    margin-bottom: 15px;
+    border-left: 2px solid #555;
+    padding-left: 10px;
+    font-style: italic;
+    white-space: pre-wrap; /* Respects line breaks from source content */
+}
+
+/* --- Metadata --- */
+.card-meta {
+    display: flex;
+    align-items: center;
+    color: #888;
+    font-size: 0.85rem;
+    margin-top: auto; /* Pushes the meta and actions to the bottom */
+}
+
+.meta-icon {
+    margin-right: 5px;
+    color: #cc0000;
+}
+
+/* --- Action Buttons (Expand/Source Link) --- */
+.card-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #444;
+}
+
+.toggle-details-btn,
+.read-more-btn {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    text-decoration: none; /* For the anchor tag */
+}
+
+.toggle-details-btn {
+    background-color: transparent;
+    border: 1px solid #cc0000;
+    color: #cc0000;
+}
+
+.toggle-details-btn:hover {
+    background-color: rgba(204, 0, 0, 0.1);
+}
+
+.read-more-btn {
+    background-color: #cc0000;
+    border: 1px solid #cc0000;
+    color: #fff;
+}
+
+.read-more-btn:hover {
+    background-color: #e00000;
+}
+
+/* --- User Action Buttons (Existing Styles Integrated) --- */
+/* The styles for .card-user-actions and .user-action-btn are already included in your prompt, 
+   so they will follow the card actions area. */
 .card-user-actions {
   display: flex;
   gap: 10px;
@@ -22,37 +178,69 @@
   font-size: 0.85rem;
   font-weight: 600;
   text-transform: uppercase;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
 }
 
+/* Hover effect */
 .user-action-btn:hover:not(:disabled) {
   background-color: #383838;
   border-color: #cc0000;
   color: #cc0000;
 }
 
+/* Active state (when added to favorites or watch later) */
 .user-action-btn.active {
   background-color: #cc0000;
   border-color: #cc0000;
-  color: white;
+  color: #fff;
 }
 
+/* Disabled while loading */
 .user-action-btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
 
+/* --- Responsive Adjustments --- */
 @media (max-width: 600px) {
-  .card-user-actions {
-    gap: 8px;
-  }
+    .card-content {
+        padding: 15px;
+    }
 
-  .user-action-btn {
-    padding: 8px 10px;
-    font-size: 0.75rem;
-  }
+    .card-title {
+        font-size: 1.2rem;
+    }
 
-  .user-action-btn span {
-    display: none;
-  }
+    .toggle-details-btn,
+    .read-more-btn {
+        padding: 8px 10px;
+        font-size: 0.75rem;
+    }
+
+    .user-action-btn span {
+        display: none; /* hide text on small screens for user actions */
+    }
+}
+
+
+.card-management-actions {
+    padding: 15px 20px 20px;
+    border-top: 1px solid #444;
+}
+
+.remove-btn {
+    width: 100%;
+    padding: 10px;
+    background-color: #550000; /* Dark Red */
+    border: 1px solid #cc0000;
+    color: #fff;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: background-color 0.2s ease;
+}
+
+.remove-btn:hover {
+    background-color: #cc0000; /* Brighten on hover */
 }

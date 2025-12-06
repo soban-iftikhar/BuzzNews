@@ -1,3 +1,5 @@
+"use client"
+
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import "../Styles/CreateArticle.css"
@@ -8,8 +10,8 @@ const CreateArticle = () => {
     title: "",
     description: "",
     content: "",
-    imageUrl: "",
-    category: "",
+    imageUrl: "", 
+    category: "", // Field collected but not sent to simplified ArticleCreate schema
     source: "",
   })
   const [error, setError] = useState("")
@@ -28,14 +30,14 @@ const CreateArticle = () => {
 
     if (user) {
       const userData = JSON.parse(user)
-      // Check if user is admin (predefined admin emails or is_admin flag from backend)
       const adminEmails = ["admin@newsbuzz.com", "admin@example.com"]
       if (adminEmails.includes(userData.email) || userData.is_admin) {
         setIsAdmin(true)
       } else {
-        // Non-admin users cannot access this page
         navigate("/")
       }
+    } else {
+        navigate("/login")
     }
   }, [navigate])
 
@@ -56,21 +58,53 @@ const CreateArticle = () => {
     try {
       const token = localStorage.getItem("token")
 
-      const response = await fetch("http://localhost:8000/api/admin/publish", {
+      // --- CRITICAL FIX: Cleaned and structured payload for FastAPI schema ---
+      const articlePayload = {
+        title: formData.title,
+        description: formData.description,
+        content: formData.content,
+        image_url: formData.imageUrl, 
+        source: formData.source, 
+        // FIX 1: Add required 'url' field (using image URL as proxy)
+        url: formData.imageUrl, 
+        // FIX 2: Add 'published_at' field with current time (required by some schemas)
+        published_at: new Date().toISOString(), 
+      }
+      
+      if (!token) {
+          throw new Error("User not authenticated.")
+      }
+
+      // API Endpoint URL is correct: /api/admin/articles
+      const response = await fetch("http://localhost:8000/api/admin/articles", { 
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(articlePayload),
       })
 
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.message || "Failed to publish article")
+        // Improved error handling: extract specific message from validation errors
+        const detail = data.detail;
+        let errorMessage = "Failed to publish article";
+
+        if (detail) {
+            if (typeof detail === 'string') {
+                errorMessage = detail;
+            } else if (Array.isArray(detail) && detail.length > 0) {
+                // Extracts the message from a typical 422 Unprocessable Entity response
+                errorMessage = `Validation Error: ${detail[0].loc.join('.')}: ${detail[0].msg}`;
+            }
+        }
+        
+        throw new Error(errorMessage)
       }
 
+      // Clear form and navigate on success
       setFormData({
         title: "",
         description: "",
@@ -82,15 +116,15 @@ const CreateArticle = () => {
       alert("Article published successfully!")
       navigate("/feed")
     } catch (err) {
+      console.error("[v0] Create Article Error:", err.message)
       setError(err.message || "Error publishing article")
-      console.error("[v0] Create Article Error:", err)
     } finally {
       setLoading(false)
     }
   }
 
   if (!isAdmin) {
-    return null
+    return <div className="loading-message">Checking credentials...</div>
   }
 
   return (

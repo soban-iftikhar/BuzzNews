@@ -6,6 +6,29 @@ import Footer from "../Components/Footer"
 import NewsCard from "../Components/NewsCard"
 import "../Styles/Home.css"
 
+const formatDate = (dateString) => {
+    if (!dateString) return "Unknown Date";
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+};
+
+const truncateText = (text, maxLength = 150) => {
+    if (!text) return "No summary available";
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength) + '...';
+};
+
+const getCategoryTag = (sourceName) => {
+    const sourceMap = {
+        "newsapi": "Technology", "livemint": "Finance", "iphoneincanada.ca": "Tech / Mobile",
+        "foxnews.com": "Politics", "financialpost": "Business", "breitbart.com": "World News",
+        "nep123.com": "Local / Geo"
+    };
+    const cleanSourceName = String(sourceName || '').toLowerCase().replace(/www\.|https:\/\//g, '').split('/')[0];
+    return sourceMap[cleanSourceName] || sourceName || "General News";
+};
+// -------------------------------------------------------------
+
 const API_BASE_URL = "http://localhost:8000"
 
 const Home = () => {
@@ -20,19 +43,29 @@ const Home = () => {
         setLoading(true)
         setError(null)
 
-        // Fetch hero article
+        // --- FETCH HERO ARTICLE ---
         const heroRes = await fetch(`${API_BASE_URL}/api/news/featured`)
         if (!heroRes.ok) throw new Error("Failed to fetch featured article")
         const heroData = await heroRes.json()
-        setHeroArticle(heroData)
+        
+        // FIX 2: Ensure we get the article object if the response is an array
+        const featuredArticle = Array.isArray(heroData) ? heroData[0] : heroData;
+        setHeroArticle(featuredArticle)
 
-        // Fetch articles for the grid - limit to 6
+
+        // --- FETCH ARTICLES FOR GRID ---
         const articlesRes = await fetch(`${API_BASE_URL}/api/news?limit=6`)
         if (!articlesRes.ok) throw new Error("Failed to fetch articles")
+        
         const articlesData = await articlesRes.json()
-        // Ensure we only display 6 articles
-        const limitedArticles = Array.isArray(articlesData.articles) ? articlesData.articles.slice(0, 6) : []
+        
+        // FIX 1: Correct data parsing for the grid articles
+        // Assume data is the array, or check common array properties
+        const articleList = Array.isArray(articlesData) ? articlesData : (articlesData.articles || articlesData.data || [])
+        
+        const limitedArticles = articleList.slice(0, 6)
         setArticles(limitedArticles)
+
       } catch (err) {
         setError(err.message)
         console.error("[v0] Error fetching data:", err)
@@ -66,19 +99,12 @@ const Home = () => {
           </section>
         ) : heroArticle ? (
           <section className="hero-section">
-            <div className="hero-content">
-              <p className="hero-category">{heroArticle.category}</p>
-              <h2 className="hero-title">{heroArticle.title}</h2>
-              <p className="hero-summary">{heroArticle.summary}</p>
-              <div className="hero-meta">
-                <span>By {heroArticle.author}</span>
-                <span className="separator">|</span>
-                <span>{heroArticle.date}</span>
-              </div>
-            </div>
-            <div className="hero-image-container">
+            
+            {/* FIX 3: Swap content and image positions for visual order on large screens */}
+            <div className="hero-image-container"> 
               <img
-                src={heroArticle.image || "/placeholder.svg"}
+                // FIX 3: Use the correct key for the image URL
+                src={heroArticle.image_url || "/placeholder.svg"} 
                 alt={heroArticle.title}
                 className="hero-image"
                 onError={(e) => {
@@ -87,12 +113,25 @@ const Home = () => {
                 }}
               />
             </div>
+
+            <div className="hero-content">
+              {/* FIX 3: Use correct keys and helper functions */}
+              
+              <h2 className="hero-title">{heroArticle.title}</h2>
+              <p className="hero-summary">{truncateText(heroArticle.description, 250)}</p>
+              
+              <div className="hero-meta">
+                
+                <span>{formatDate(heroArticle.published_at)}</span>
+              </div>
+            </div>
+
           </section>
         ) : null}
 
         <h3 className="section-title">Latest Updates</h3>
 
-        {/* --- News Grid Section: Exactly 6 Cards --- */}
+        {/* --- News Grid Section --- */}
         <section className="news-grid-section">
           {loading ? (
             <div style={{ textAlign: "center", padding: "40px" }}>
@@ -108,8 +147,9 @@ const Home = () => {
             </div>
           ) : (
             <div className="news-grid">
-              {articles.map((article) => (
-                <NewsCard key={article.id} article={article} />
+              {articles.map((article, index) => (
+                // Use index as a fallback key if article.id is null or missing
+                <NewsCard key={article.id || index} article={article} /> 
               ))}
             </div>
           )}

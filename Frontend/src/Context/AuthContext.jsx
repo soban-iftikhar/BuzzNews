@@ -11,7 +11,8 @@ export const AuthProvider = ({ children }) => {
 
   // Initialize auth state from localStorage on mount
   useEffect(() => {
-    const storedToken = localStorage.getItem("authToken")
+    // FIX: Changed from "authToken" to the correct key "token"
+    const storedToken = localStorage.getItem("token")
     const storedUser = localStorage.getItem("user")
     if (storedToken && storedUser) {
       setToken(storedToken)
@@ -23,21 +24,24 @@ export const AuthProvider = ({ children }) => {
   const login = (userData, authToken) => {
     setUser(userData)
     setToken(authToken)
-    localStorage.setItem("authToken", authToken)
+    // FIX: Changed from "authToken" to the correct key "token"
+    localStorage.setItem("token", authToken)
     localStorage.setItem("user", JSON.stringify(userData))
   }
 
   const signup = (userData, authToken) => {
     setUser(userData)
     setToken(authToken)
-    localStorage.setItem("authToken", authToken)
+    // FIX: Changed from "authToken" to the correct key "token"
+    localStorage.setItem("token", authToken)
     localStorage.setItem("user", JSON.stringify(userData))
   }
 
   const logout = () => {
     setUser(null)
     setToken(null)
-    localStorage.removeItem("authToken")
+    // FIX: Changed from "authToken" to the correct key "token"
+    localStorage.removeItem("token")
     localStorage.removeItem("user")
   }
 

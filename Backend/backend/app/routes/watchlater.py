@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload  # <-- IMPORTED joinedload
 from app.database import get_db
 from app.models import User, Article, WatchLater
 from app.schemas import WatchLaterResponse, WatchLaterCreate
@@ -34,7 +34,13 @@ def add_watch_later(watchlater_data: WatchLaterCreate, current_user: User = Depe
 @router.get("/", response_model=List[WatchLaterResponse])
 def get_watch_later(current_user: User = Depends(verify_token), db: Session = Depends(get_db)):
     """Get user's watch later articles"""
-    watch_later = db.query(WatchLater).filter(WatchLater.user_id == current_user.id).all()
+    # CRITICAL FIX: Use joinedload to eagerly fetch the related 'article' data
+    watch_later = db.query(WatchLater).options(
+        joinedload(WatchLater.article)
+    ).filter(
+        WatchLater.user_id == current_user.id
+    ).all()
+    
     return watch_later
 
 @router.delete("/{watchlater_id}")

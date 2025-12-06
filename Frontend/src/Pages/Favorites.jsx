@@ -15,6 +15,32 @@ const Favorites = () => {
 
   const API_BASE_URL = "http://localhost:8000"
 
+  // NEW DELETE HANDLER
+  const handleRemoveFavorite = async (favoriteId) => {
+    const token = localStorage.getItem("token")
+    if (!token) return navigate("/login")
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/favorites/${favoriteId}`, {
+            method: "DELETE",
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        })
+
+        if (!response.ok) {
+            throw new Error("Failed to remove favorite.")
+        }
+
+        // OPTIMISTIC UI UPDATE: Remove the item from the state immediately
+        setFavorites(prev => prev.filter(fav => fav.id !== favoriteId))
+        console.log(`Removed favorite ID: ${favoriteId}`)
+
+    } catch (err) {
+        setError(err.message || "Could not remove item from favorites.")
+    }
+}
+
   useEffect(() => {
     const token = localStorage.getItem("token")
     if (!token) {
@@ -27,18 +53,22 @@ const Favorites = () => {
         setLoading(true)
         setError(null)
 
-        const response = await fetch(`${API_BASE_URL}/api/favorites`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
+       // FIX: URL is correct: /api/favorites/
+       const response = await fetch(`${API_BASE_URL}/api/favorites/`, { 
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
 
         if (!response.ok) {
           throw new Error(`Failed to fetch favorites: ${response.statusText}`)
         }
 
         const data = await response.json()
-        setFavorites(data.favorites || [])
+        
+        // CRITICAL FIX: The FastAPI endpoint returns the array directly
+        setFavorites(Array.isArray(data) ? data : [])
+
       } catch (err) {
         setError("Failed to load favorites.")
         setFavorites([])
@@ -93,8 +123,14 @@ const Favorites = () => {
           {favorites.length > 0 ? (
             <section className="news-grid-section">
               <div className="news-grid">
-                {favorites.map((article) => (
-                  <NewsCard key={article.id} article={article} />
+                {favorites.map((item) => (
+                  // Map over the saved item and use the nested article object for NewsCard
+                  <NewsCard 
+                    key={item.id} 
+                    article={item.article} 
+                    onRemove={handleRemoveFavorite} // Pass the delete handler
+                    savedItemId={item.id} // Pass the Favorite ID
+                  />
                 ))}
               </div>
             </section>
