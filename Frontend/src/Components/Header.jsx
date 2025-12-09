@@ -1,6 +1,4 @@
-"use client"
-
-import { Rss, Star, Clock, Home, Info, Mail, LogOut, LogIn, PenTool } from "lucide-react"
+import { Rss, Star, Clock, Home, Info, Mail, LogOut, LogIn, PenTool, Menu, X } from "lucide-react"
 import "../Styles/Header.css"
 import { NavLink, Link, useNavigate } from "react-router-dom"
 import { useState, useEffect } from "react"
@@ -9,13 +7,13 @@ const Header = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [user, setUser] = useState(null)
   const [isAdmin, setIsAdmin] = useState(false)
+  const [isMenuOpen, setIsMenuOpen] = useState(false) 
   const navigate = useNavigate()
 
   useEffect(() => {
     const token = localStorage.getItem("token")
     const userData = localStorage.getItem("user")
     
-    // Check for both token AND user data for a complete authenticated state
     if (token && userData) {
       setIsAuthenticated(true)
       const parsedUser = JSON.parse(userData)
@@ -26,7 +24,7 @@ const Header = () => {
         setIsAdmin(true)
       }
     } else {
-        // Ensure state is reset if token is missing
+        
         setIsAuthenticated(false)
         setUser(null)
         setIsAdmin(false)
@@ -37,16 +35,15 @@ const Header = () => {
     { name: "Home", path: "/", icon: Home },
     { name: "Feed", path: "/feed", icon: Rss },
     { name: "Favorites", path: "/favorites", icon: Star },
-    { name: "WatchLater", path: "/watch-later", icon: Clock },
+    { name: "Watch Later", path: "/watchlater", icon: Clock }, 
     { name: "About", path: "/about", icon: Info },
     { name: "Contact", path: "/contact", icon: Mail },
   ]
   
-  // NOTE: Changed watch-later path for consistency, ensure your router uses this path
+ 
   const authNavItems = [
     ...(isAdmin ? [{ name: "Write", path: "/create-article", icon: PenTool }] : []),
-    
-    // Auth status items are now separate to be placed in the main masthead
+ 
   ];
 
   const handleLogout = () => {
@@ -56,26 +53,36 @@ const Header = () => {
     setUser(null)
     setIsAdmin(false)
     navigate("/")
+    setIsMenuOpen(false); 
+  }
+  
+  const handleNavLinkClick = () => {
+      setIsMenuOpen(false);
   }
 
   return (
     <nav className="navbar">
-      {/* 1. TOP MASTHEAD CONTAINER: Logo + Welcome Message/Auth */}
+      
       <div className="masthead-top-bar">
-        {/* LOGO (Centered) */}
+        {/* LOGO (Left) */}
         <Link to="/" className="masthead-link" aria-label="Go to home">
           <h1>
             <span className="buzz">Buzz</span>
             <span className="news">News</span>
           </h1>
         </Link>
+        
+        {/* HAMBURGER BUTTON (Mobile Only) */}
+        <button className="menu-toggle-btn" onClick={() => setIsMenuOpen(!isMenuOpen)} aria-label="Toggle navigation menu">
+            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
 
-        {/* WELCOME / LOGIN BUTTONS (Right) */}
-        <div className="auth-status-area">
+        {/* WELCOME / LOGIN BUTTONS (Right - Desktop Only) */}
+        <div className="auth-status-area auth-status-desktop">
           {isAuthenticated ? (
             <>
               <span className="welcome-message">
-                Welcome, {user?.username || user?.email}
+                Welcome, <strong>{user?.username || user?.email}</strong>
               </span>
               <button onClick={handleLogout} className="auth-btn logout-btn">
                 <LogOut size={16} />
@@ -95,23 +102,44 @@ const Header = () => {
           )}
         </div>
       </div>
-      {/* End Masthead Top Bar */}
 
-      {/* 2. MAIN NAVIGATION LIST */}
-      <ul className="nav-list">
+    
+      <ul className={`nav-list ${isMenuOpen ? 'open' : ''}`}>
         {[...navItems, ...authNavItems].map((item) => {
           const Icon = item.icon
           return (
             <li key={item.path}>
-              <NavLink to={item.path} className={({ isActive }) => (isActive ? "active" : "")}>
+              <NavLink to={item.path} onClick={handleNavLinkClick} className={({ isActive }) => (isActive ? "active" : "")}>
                 <Icon className="nav-icon" size={16} />
                 <span>{item.name}</span>
               </NavLink>
             </li>
           )
         })}
+        
+     
+        <li className="mobile-auth-separator" aria-hidden="true"></li>
+        {isAuthenticated ? (
+             <li className="mobile-auth-item">
+                <button onClick={handleLogout} className="logout-btn auth-btn">
+                    <LogOut size={16} />
+                    <span>Logout</span>
+                </button>
+            </li>
+        ) : (
+         
+            <li className="mobile-auth-item mobile-login-group">
+                <NavLink to="/login" className="auth-btn" onClick={handleNavLinkClick}>
+                    <LogIn size={16} />
+                    <span>Login</span>
+                </NavLink>
+                <NavLink to="/signup" className="auth-btn" onClick={handleNavLinkClick}>
+                    <span>Sign Up</span>
+                </NavLink>
+            </li>
+        )}
       </ul>
-      {/* End Main Navigation List */}
+    
     </nav>
   )
 }

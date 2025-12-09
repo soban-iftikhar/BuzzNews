@@ -1,9 +1,17 @@
-/* --- NAVBAR WRAPPER --- */
+/* --- CORE GLOBAL STYLES (Using Actual Values) --- */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 .navbar {
   background-color: #1a1a1a;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
   border-bottom: 5px solid #cc0000;
   font-family: "Arial", sans-serif;
+  position: relative;
 }
 
 /* --- MASTHEAD TOP BAR (Logo + Auth Status) --- */
@@ -15,7 +23,6 @@
   background-color: #0d0d0d;
 }
 
-/* --- LOGO STYLES --- */
 .masthead-link {
   text-decoration: none;
 }
@@ -37,7 +44,7 @@
   font-weight: 400;
 }
 
-/* --- AUTH STATUS AREA (Welcome Message, Login/Logout Buttons) --- */
+/* --- AUTH STATUS AREA (Desktop Only) --- */
 .auth-status-area {
   display: flex;
   align-items: center;
@@ -50,13 +57,11 @@
   font-weight: 400;
 }
 .welcome-message strong {
-  /* --- FIX: Username Bolder and Larger --- */
-  color: #ffaa00; /* Highlight username */
-  font-weight: 800; /* Make bolder */
-  font-size: 1.25rem; /* Make slightly larger than surrounding text */
+  color: #ffaa00;
+  font-weight: 800;
+  font-size: 1.25rem;
 }
 
-/* Styling Auth Buttons (Login, Signup, Logout) to look like Nav Links */
 .auth-btn {
   display: flex;
   align-items: center;
@@ -80,7 +85,7 @@
   color: #ff4d4d;
 }
 
-/* --- NAVIGATION LIST BAR --- */
+/* --- NAVIGATION LIST BAR (Desktop Default) --- */
 .nav-list {
   display: flex;
   flex-wrap: wrap;
@@ -89,12 +94,10 @@
   margin: 0;
   background-color: #2c2c2c;
   border-top: 1px solid #444;
-  /* --- FIX: Center navigation items --- */
   justify-content: center; 
   padding-bottom: 0;
 }
 
-/* --- Navigation Links --- */
 .nav-list li a {
   display: flex;
   align-items: center;
@@ -111,13 +114,11 @@
   height: 100%;
 }
 
-/* --- Hover State --- */
 .nav-list li a:hover {
   background-color: #383838;
   color: #ff4d4d;
 }
 
-/* --- Active State --- */
 .nav-list li a.active {
   background-color: #cc0000;
   color: white;
@@ -136,38 +137,137 @@
   z-index: 10;
 }
 
-/* --- Responsive adjustments --- */
+/* --- NEW HAMBURGER STYLES --- */
+.menu-toggle-btn {
+    display: none; /* Hidden by default on desktop */
+    background: none;
+    border: none;
+    color: #f0f0f0;
+    cursor: pointer;
+    padding: 10px;
+    z-index: 100;
+}
+
+/* --- MOBILE AUTH STYLES (CRITICAL FIX: Hide on Desktop) --- */
+.mobile-auth-separator,
+.mobile-auth-item,
+.mobile-login-group {
+    display: none; /* Hide these mobile-specific elements on wide screens */
+}
+
+.mobile-auth-separator {
+    height: 1px;
+    background-color: #383838;
+    margin: 10px 20px;
+    list-style: none;
+}
+
+.mobile-auth-item {
+    width: 100%;
+    text-align: center;
+    list-style: none;
+}
+
+/* --- Responsive adjustments (Mobile Menu Logic) --- */
 @media (max-width: 992px) {
-  .nav-list {
-    justify-content: center;
-    border-top: 1px solid #444;
+  
+  /* Show the hamburger button */
+  .menu-toggle-btn {
+      display: block; 
   }
+
+  /* Hide the desktop login/logout buttons */
+  .auth-status-area.auth-status-desktop {
+      display: none; 
+  }
+  
+  /* --- Override desktop hiding rule to show mobile elements --- */
+  .mobile-auth-separator {
+      display: block; 
+  }
+  
+  .mobile-auth-item {
+      display: block;
+  }
+  
+  .mobile-login-group {
+      /* Display as flex on mobile to put login/signup side-by-side */
+      display: flex; 
+      justify-content: space-evenly;
+      width: 100%;
+      padding: 10px 0;
+  }
+  /* -------------------------------------------------------- */
+
+
+  /* --- Collapse the main navigation into a vertical menu --- */
+  .nav-list {
+    flex-direction: column;
+    flex-wrap: nowrap; 
+    
+    position: absolute;
+    top: 100%; 
+    left: 0;
+    width: 100%;
+    
+    /* Use max-height for collapse */
+    max-height: 0; 
+    overflow: hidden;
+    background-color: #2c2c2c;
+    border-top: 1px solid #444;
+    transition: max-height 0.3s ease-out; /* The transition used for collapsing */
+    z-index: 50;
+  }
+
+  /* CRITICAL FIX: Menu fully expands when open */
+  .nav-list.open {
+    max-height: 600px; /* Expands when open */
+    border-bottom: 2px solid #cc0000;
+  }
+  
+  .nav-list li {
+      width: 100%;
+      margin: 0;
+  }
+
+  .nav-list li a {
+    justify-content: flex-start;
+    padding: 15px 25px;
+    width: 100%;
+    border-bottom: 1px solid #383838;
+  }
+  
+  /* Reset active state marker for mobile */
+  .nav-list li a.active::after {
+      bottom: 0;
+      height: 100%;
+      left: 0;
+      width: 5px; 
+      top: 0;
+      right: auto;
+  }
+  
+  .nav-list li a.active {
+      background-color: #383838;
+      color: white;
+  }
+  
+  
+  .mobile-auth-item .auth-btn {
+      width: 45%; 
+      justify-content: center;
+      margin: 0;
+  }
+
 }
 
 @media (max-width: 768px) {
   .masthead-top-bar {
-    flex-direction: column;
-    gap: 10px;
+      flex-direction: row; 
+      justify-content: space-between;
+      padding: 10px 20px;
   }
   .navbar h1 {
     font-size: 2rem;
-  }
-  .auth-status-area {
-    justify-content: center;
-    width: 100%;
-    gap: 10px;
-    padding-top: 10px;
-    border-top: 1px dashed #444;
-  }
-  .welcome-message {
-    font-size: 0.9rem;
-    /* Removed the display: none; rule to show username on mobile, adjust if necessary */
-  }
-  .welcome-message strong {
-      font-size: 1.1rem; /* Adjust size down for mobile */
-  }
-  .auth-btn {
-    padding: 6px 12px;
-    font-size: 0.75rem;
   }
 }
