@@ -1,4 +1,4 @@
-"use client"
+
 
 import { useState } from "react"
 import { useNavigate, Link } from "react-router-dom"
@@ -12,21 +12,96 @@ const Signup = () => {
     password: "",
     confirmPassword: "",
   })
+  
   const [error, setError] = useState("")
+  const [fieldErrors, setFieldErrors] = useState({}) 
   const [loading, setLoading] = useState(false)
+
+  const validateField = (name, value) => {
+    let error = ""
+
+    if (name === "username") {
+      const usernameRegex = /^[a-zA-Z]{3,}$/
+      if (value.length > 0 && !value.match(usernameRegex)) {
+        error = "Username must be at least 3 letters long and contain only letters (A-Z, a-z)."
+      } else if (value.length < 3 && value.length > 0) {
+        error = "Username is too short (min 3 letters)."
+      }
+    }
+
+    if (name === "password") {
+      if (value.length > 0 && value.length < 8) {
+        error = "Password must be at least 8 characters long."
+      } else if (value.length >= 8 && !/[A-Z]/.test(value)) {
+        error = "Password must contain at least one capital letter."
+      }
+    }
+    
+    if (name === "email" && value.length > 0) {
+      if (!value.includes("@")) {
+          error = "Please enter a valid email format."
+      } 
+      else if (!value.endsWith("@gmail.com") && !value.endsWith("@yahoo.com")) {
+        error = "Only @gmail.com or @yahoo.com domains are allowed."
+      }
+    }
+
+    if (name === "confirmPassword" || name === "password") {
+        const pass = name === "password" ? value : formData.password;
+        const confirmPass = name === "confirmPassword" ? value : formData.confirmPassword;
+
+        if (confirmPass.length > 0 && pass !== confirmPass) {
+            setFieldErrors(prev => ({ ...prev, confirmPassword: "Passwords do not match." }));
+        } else if (name === "confirmPassword") {
+            setFieldErrors(prev => ({ ...prev, confirmPassword: "" }));
+        }
+    }
+    
+    setFieldErrors(prev => ({ ...prev, [name]: error }));
+  }
+
+  const validateForm = () => {
+    let isValid = true
+
+    validateField('username', formData.username);
+    validateField('email', formData.email);
+    validateField('password', formData.password);
+    validateField('confirmPassword', formData.confirmPassword);
+    
+    const finalErrors = fieldErrors;
+    if (finalErrors.username || finalErrors.email || finalErrors.password || finalErrors.confirmPassword || formData.password !== formData.confirmPassword || !formData.username || !formData.email || !formData.password || !formData.confirmPassword) {
+        isValid = false;
+    }
+
+    for (const key in fieldErrors) {
+        if (fieldErrors[key]) {
+            isValid = false;
+            break;
+        }
+    }
+
+    if (!formData.username || !formData.email || !formData.password || !formData.confirmPassword) {
+        setError("All fields are required.");
+        isValid = false;
+    }
+    
+    return isValid;
+  }
 
   const handleChange = (e) => {
     const { name, value } = e.target
-    setFormData({ ...formData, [name]: value })
+    
+    setFormData(prev => ({ ...prev, [name]: value }))
+    
+    validateField(name, value)
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError("")
 
-    if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match")
-      return
+    if (!validateForm()) {
+      return 
     }
 
     setLoading(true)
@@ -43,15 +118,24 @@ const Signup = () => {
       })
 
       if (!response.ok) {
-        throw new Error("Signup failed. Please try again.")
+        const errorData = await response.json();
+        const detail = errorData.detail || "Signup failed. Please try again."
+
+        if (response.status === 422) {
+            setError("Invalid input. Please check all fields carefully or try a different username/email.")
+        } else {
+            setError(detail)
+        }
+        throw new Error(detail)
       }
 
       const data = await response.json()
       localStorage.setItem("token", data.token)
       localStorage.setItem("user", JSON.stringify(data.user))
       navigate("/")
+
     } catch (err) {
-      setError(err.message || "An error occurred during signup")
+      if (!error) setError(err.message || "A network error occurred during signup")
     } finally {
       setLoading(false)
     }
@@ -82,7 +166,9 @@ const Signup = () => {
               required
               placeholder="Choose a username"
               disabled={loading}
+              className={fieldErrors.username ? 'input-error' : ''}
             />
+            {fieldErrors.username && <p className="field-error">{fieldErrors.username}</p>}
           </div>
 
           <div className="form-group">
@@ -96,7 +182,9 @@ const Signup = () => {
               required
               placeholder="Enter your email"
               disabled={loading}
+              className={fieldErrors.email ? 'input-error' : ''}
             />
+            {fieldErrors.email && <p className="field-error">{fieldErrors.email}</p>}
           </div>
 
           <div className="form-group">
@@ -110,7 +198,9 @@ const Signup = () => {
               required
               placeholder="Enter your password"
               disabled={loading}
+              className={fieldErrors.password ? 'input-error' : ''}
             />
+            {fieldErrors.password && <p className="field-error">{fieldErrors.password}</p>}
           </div>
 
           <div className="form-group">
@@ -124,7 +214,9 @@ const Signup = () => {
               required
               placeholder="Confirm your password"
               disabled={loading}
+              className={fieldErrors.confirmPassword ? 'input-error' : ''}
             />
+            {fieldErrors.confirmPassword && <p className="field-error">{fieldErrors.confirmPassword}</p>}
           </div>
 
           <button type="submit" className="auth-submit-btn" disabled={loading}>

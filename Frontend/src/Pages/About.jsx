@@ -78,42 +78,42 @@ const About = () => {
 
               <div className="team-member-card">
                 <img
-                  src="/images/founder.jpg"
+                  src="soban.png"
                   alt="Founder"
                   className="member-photo"
                 />
-                <h3 className="member-name">Alex Carter</h3>
+                <h3 className="member-name">Soban Iftikhar</h3>
                 <p className="member-title">Founder & Editor in Chief</p>
                 <p className="member-bio">
-                  Alex oversees the editorial direction of BuzzNews ensuring that every story reflects 
-                  the brand’s commitment to truth clarity and boldness.
+                  Soban oversees the editorial direction of BuzzNews ensuring that every story reflects 
+                  the brand,s commitment to truth clarity and boldness.
                 </p>
               </div>
 
               <div className="team-member-card">
                 <img
-                  src="/images/lead-writer.jpg"
+                  src="jappa.png"
                   alt="Lead Writer"
                   className="member-photo"
                 />
-                <h3 className="member-name">Jamie Brooks</h3>
+                <h3 className="member-name">Talal Nasir Jappa</h3>
                 <p className="member-title">Lead Writer</p>
                 <p className="member-bio">
-                  Jamie covers politics culture and emerging trends with a storytelling style that 
+                  Talal covers politics culture and emerging trends with a storytelling style that 
                   connects deeply with readers.
                 </p>
               </div>
 
               <div className="team-member-card">
                 <img
-                  src="/images/tech-analyst.jpg"
+                  src="ali.jpeg"
                   alt="Tech Analyst"
                   className="member-photo"
                 />
-                <h3 className="member-name">Riley Morgan</h3>
+                <h3 className="member-name">Muhammad Ali </h3>
                 <p className="member-title">Tech Analyst</p>
                 <p className="member-bio">
-                  Riley analyzes the latest tech developments and translates complex updates into 
+                  Ali analyzes the latest tech developments and translates complex updates into 
                   accessible insights for the audience.
                 </p>
               </div>

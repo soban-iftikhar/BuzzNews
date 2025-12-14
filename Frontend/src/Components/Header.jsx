@@ -103,6 +103,7 @@ const Header = () => {
         </div>
       </div>
 
+
     
       <ul className={`nav-list ${isMenuOpen ? 'open' : ''}`}>
         {[...navItems, ...authNavItems].map((item) => {

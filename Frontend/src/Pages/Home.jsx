@@ -1,4 +1,3 @@
-"use client"
 
 import { useState, useEffect } from "react"
 import Header from "../Components/Header"
@@ -18,16 +17,7 @@ const truncateText = (text, maxLength = 150) => {
     return text.substring(0, maxLength) + '...';
 };
 
-const getCategoryTag = (sourceName) => {
-    const sourceMap = {
-        "newsapi": "Technology", "livemint": "Finance", "iphoneincanada.ca": "Tech / Mobile",
-        "foxnews.com": "Politics", "financialpost": "Business", "breitbart.com": "World News",
-        "nep123.com": "Local / Geo"
-    };
-    const cleanSourceName = String(sourceName || '').toLowerCase().replace(/www\.|https:\/\//g, '').split('/')[0];
-    return sourceMap[cleanSourceName] || sourceName || "General News";
-};
-// -------------------------------------------------------------
+
 
 const API_BASE_URL = "http://localhost:8000"
 
