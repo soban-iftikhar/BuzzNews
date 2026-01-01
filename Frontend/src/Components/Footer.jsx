@@ -1,4 +1,3 @@
-// ...existing code...
 import React, { useState } from 'react';
 import { Facebook, Twitter, Instagram, Send } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -19,7 +18,6 @@ const Footer = () => {
   return (
     <footer className="footer">
       <div className="footer-content-wrapper">
-        {/* Column 1: Logo/Masthead */}
         <div className="footer-masthead footer-col">
           <Link to="/" className="footer-logo-link" aria-label="Go to home">
             <h2 className="footer-logo">
@@ -61,7 +59,6 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Column 2: Quick Links */}
         <div className="footer-links footer-col">
           <h3>Quick Links</h3>
           <ul>
@@ -72,7 +69,6 @@ const Footer = () => {
           </ul>
         </div>
 
-        {/* Column 3: Company */}
         <div className="footer-info footer-col">
           <h3>Company</h3>
           <ul>
@@ -81,7 +77,6 @@ const Footer = () => {
           </ul>
         </div>
 
-        {/* Column 4: Subscribe */}
         <div className="footer-subscribe footer-col">
           <h3>Subscribe</h3>
           <p>Get the headlines delivered straight to your inbox daily.</p>

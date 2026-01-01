@@ -10,8 +10,6 @@ import {
 import "../Styles/NewsCard.css"
 import LoginPromptModal from "./LoginPromptModal"
 
-// --- CATEGORY MAPPING FUNCTION (Original, simplified version) ---
-// This function relies strictly on the source string matching a key in the map.
 const getCategoryTag = (sourceName) => {
     const sourceMap = {
         "newsapi": "Technology", 
@@ -25,13 +23,10 @@ const getCategoryTag = (sourceName) => {
 
     let cleanSourceName = String(sourceName || '').toLowerCase();
     
-    // Normalize source name (remove URLs parts, etc.)
     cleanSourceName = cleanSourceName
         .replace(/https?:\/\//, '')
         .replace(/^www\./, '')      
         .split('/')[0];
-    
-    // Check if the cleaned source (e.g., 'newsapi' or 'livemint.com') is in the map
     const foundCategory = Object.keys(sourceMap).find(key => 
         cleanSourceName.includes(key)
     );
@@ -40,12 +35,8 @@ const getCategoryTag = (sourceName) => {
         return sourceMap[foundCategory];
     }
     
-    // Fallback to the original source name or a general category
     return sourceName || "General News";
 };
-// ------------------------------------
-
-// NOTE: Added onRemove and savedItemId props
 const NewsCard = ({ article, onRemove, savedItemId }) => {
   const [isExpanded, setIsExpanded] = useState(false)
   const [showLoginPrompt, setShowLoginPrompt] = useState(false)
@@ -57,12 +48,10 @@ const NewsCard = ({ article, onRemove, savedItemId }) => {
   const token = localStorage.getItem("token")
   const isAuthenticated = !!token
 
-  // FIX: Using article?.image_url
   const imageUrl =
     article?.image_url ||
     "https://placehold.co/600x400/333333/cccccc?text=NO+IMAGE"
 
-  // SAFELY FORMAT DATE
   const formatDate = (dateString) => {
     if (!dateString) return "Unknown Date"
     const date = new Date(dateString)
@@ -73,17 +62,14 @@ const NewsCard = ({ article, onRemove, savedItemId }) => {
     })
   }
 
-  // AVOID CRASH IF DESCRIPTION IS NULL
   const truncateText = (text, lines = 2) => {
     if (!text) return "No description available"
     const lineArray = text.split("\n")
     return lineArray.slice(0, lines).join("\n")
   }
 
-  // CRITICAL FIX: USE THE DATABASE UUID (article?.id) for API payloads
   const uniqueId = article?.id 
 
-  // ------------------- FAVORITES HANDLER --------------------
   const handleFavoriteClick = async () => {
     if (!isAuthenticated) {
       setShowLoginPrompt(true)
@@ -92,14 +78,12 @@ const NewsCard = ({ article, onRemove, savedItemId }) => {
 
     setFavoriteLoading(true)
     try {
-      // URL is correct: /api/favorites/
       const response = await fetch("http://localhost:8000/api/favorites/" ,{
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`
         },
-        // FIX: Sending snake_case article_id and uniqueId is the UUID
         body: JSON.stringify({ article_id: uniqueId })
       })
 
@@ -117,7 +101,6 @@ const NewsCard = ({ article, onRemove, savedItemId }) => {
     }
   }
 
-  // ------------------- WATCH LATER HANDLER --------------------
   const handleWatchLaterClick = async () => {
     if (!isAuthenticated) {
       setShowLoginPrompt(true)
@@ -126,14 +109,12 @@ const NewsCard = ({ article, onRemove, savedItemId }) => {
 
     setWatchLaterLoading(true)
     try {
-      // URL is correct: /api/watchlater/
       const response = await fetch("http://localhost:8000/api/watchlater/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`
         },
-       // FIX: Sending snake_case article_id and uniqueId is the UUID
        body: JSON.stringify({ article_id: uniqueId })
       })
 
@@ -154,7 +135,6 @@ const NewsCard = ({ article, onRemove, savedItemId }) => {
   return (
     <>
       <div className="news-card">
-        {/* IMAGE AREA */}
         <div className="card-image-wrapper">
           <img
             src={imageUrl}
@@ -170,7 +150,6 @@ const NewsCard = ({ article, onRemove, savedItemId }) => {
 
         </div>
 
-        {/* CONTENT */}
         <div className="card-content">
           <h4 className="card-title">{article?.title || "Untitled Article"}</h4>
 
@@ -191,12 +170,10 @@ const NewsCard = ({ article, onRemove, savedItemId }) => {
           <div className="card-meta">
             <Clock size={14} className="meta-icon" />
             <span className="card-date">
-              {/* FIX: Using article?.published_at */}
               {formatDate(article?.published_at)}
             </span>
           </div>
 
-          {/* ACTION BUTTONS */}
           <div className="card-actions">
             <button
               className="toggle-details-btn"
@@ -204,7 +181,7 @@ const NewsCard = ({ article, onRemove, savedItemId }) => {
             >
               {isExpanded ? (
                 <>
-                  <ChevronUp size={16} /> Show Less
+                  <ChevronUp size={20} /> Show Less
                 </>
               ) : (
                 <>
@@ -223,7 +200,6 @@ const NewsCard = ({ article, onRemove, savedItemId }) => {
             </a>
           </div>
 
-          {/* USER ACTION BUTTONS (Hidden when onRemove is active on Favorites/WatchLater pages) */}
           {!onRemove && (
             <div className="card-user-actions">
               <button
@@ -249,7 +225,6 @@ const NewsCard = ({ article, onRemove, savedItemId }) => {
           )}
         </div>
 
-        {/* --- REMOVE BUTTON (NEW) --- */}
         {onRemove && (
             <div className="card-management-actions">
                 <button

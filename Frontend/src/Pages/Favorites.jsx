@@ -14,7 +14,6 @@ const Favorites = () => {
 
   const API_BASE_URL = "http://localhost:8000"
 
-  // NEW DELETE HANDLER
   const handleRemoveFavorite = async (favoriteId) => {
     const token = localStorage.getItem("token")
     if (!token) return navigate("/login")
@@ -31,7 +30,6 @@ const Favorites = () => {
             throw new Error("Failed to remove favorite.")
         }
 
-        // OPTIMISTIC UI UPDATE: Remove the item from the state immediately
         setFavorites(prev => prev.filter(fav => fav.id !== favoriteId))
         console.log(`Removed favorite ID: ${favoriteId}`)
 
@@ -52,7 +50,6 @@ const Favorites = () => {
         setLoading(true)
         setError(null)
 
-       // FIX: URL is correct: /api/favorites/
        const response = await fetch(`${API_BASE_URL}/api/favorites/`, { 
         headers: {
           Authorization: `Bearer ${token}`,
@@ -65,7 +62,6 @@ const Favorites = () => {
 
         const data = await response.json()
         
-        // CRITICAL FIX: The FastAPI endpoint returns the array directly
         setFavorites(Array.isArray(data) ? data : [])
 
       } catch (err) {
@@ -123,12 +119,11 @@ const Favorites = () => {
             <section className="news-grid-section">
               <div className="news-grid">
                 {favorites.map((item) => (
-                  // Map over the saved item and use the nested article object for NewsCard
                   <NewsCard 
                     key={item.id} 
                     article={item.article} 
-                    onRemove={handleRemoveFavorite} // Pass the delete handler
-                    savedItemId={item.id} // Pass the Favorite ID
+                    onRemove={handleRemoveFavorite}
+                    savedItemId={item.id}
                   />
                 ))}
               </div>

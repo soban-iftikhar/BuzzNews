@@ -33,24 +33,16 @@ const Home = () => {
         setLoading(true)
         setError(null)
 
-        // --- FETCH HERO ARTICLE ---
         const heroRes = await fetch(`${API_BASE_URL}/api/news/featured`)
         if (!heroRes.ok) throw new Error("Failed to fetch featured article")
         const heroData = await heroRes.json()
-        
-        // FIX 2: Ensure we get the article object if the response is an array
         const featuredArticle = Array.isArray(heroData) ? heroData[0] : heroData;
         setHeroArticle(featuredArticle)
 
-
-        // --- FETCH ARTICLES FOR GRID ---
         const articlesRes = await fetch(`${API_BASE_URL}/api/news?limit=6`)
         if (!articlesRes.ok) throw new Error("Failed to fetch articles")
         
         const articlesData = await articlesRes.json()
-        
-        // FIX 1: Correct data parsing for the grid articles
-        // Assume data is the array, or check common array properties
         const articleList = Array.isArray(articlesData) ? articlesData : (articlesData.articles || articlesData.data || [])
         
         const limitedArticles = articleList.slice(0, 6)
@@ -71,7 +63,6 @@ const Home = () => {
     <div className="page-container">
       <Header />
       <main className="main-content">
-        {/* --- Hero Section: Large Featured Story --- */}
         {loading ? (
           <section className="hero-section">
             <div className="hero-content">
@@ -89,11 +80,8 @@ const Home = () => {
           </section>
         ) : heroArticle ? (
           <section className="hero-section">
-            
-            {/* FIX 3: Swap content and image positions for visual order on large screens */}
             <div className="hero-image-container"> 
               <img
-                // FIX 3: Use the correct key for the image URL
                 src={heroArticle.image_url || "/placeholder.svg"} 
                 alt={heroArticle.title}
                 className="hero-image"
@@ -105,8 +93,6 @@ const Home = () => {
             </div>
 
             <div className="hero-content">
-              {/* FIX 3: Use correct keys and helper functions */}
-              
               <h2 className="hero-title">{heroArticle.title}</h2>
               <p className="hero-summary">{truncateText(heroArticle.description, 250)}</p>
               
@@ -121,7 +107,6 @@ const Home = () => {
 
         <h3 className="section-title">Latest Updates</h3>
 
-        {/* --- News Grid Section --- */}
         <section className="news-grid-section">
           {loading ? (
             <div style={{ textAlign: "center", padding: "40px" }}>
@@ -138,7 +123,6 @@ const Home = () => {
           ) : (
             <div className="news-grid">
               {articles.map((article, index) => (
-                // Use index as a fallback key if article.id is null or missing
                 <NewsCard key={article.id || index} article={article} /> 
               ))}
             </div>

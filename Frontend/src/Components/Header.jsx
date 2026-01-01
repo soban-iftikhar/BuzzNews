@@ -64,20 +64,17 @@ const Header = () => {
     <nav className="navbar">
       
       <div className="masthead-top-bar">
-        {/* LOGO (Left) */}
         <Link to="/" className="masthead-link" aria-label="Go to home">
           <h1>
             <span className="buzz">Buzz</span>
             <span className="news">News</span>
           </h1>
         </Link>
-        
-        {/* HAMBURGER BUTTON (Mobile Only) */}
+
         <button className="menu-toggle-btn" onClick={() => setIsMenuOpen(!isMenuOpen)} aria-label="Toggle navigation menu">
             {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
 
-        {/* WELCOME / LOGIN BUTTONS (Right - Desktop Only) */}
         <div className="auth-status-area auth-status-desktop">
           {isAuthenticated ? (
             <>

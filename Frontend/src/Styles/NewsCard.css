@@ -1,27 +1,24 @@
-/* --- NewsCard Main Container --- */
 .news-card {
-    background-color: #1a1a1a; /* Dark gray for the card background */
-    border: 1px solid #333; /* Subtle border */
+    background-color: #1a1a1a;
+    border: 1px solid #333;
     border-radius: 8px;
     overflow: hidden;
     display: flex;
     flex-direction: column;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    height: 100%; /* Important for grid alignment */
+    height: 100%;
 }
 
 .news-card:hover {
-    transform: translateY(-5px); /* Lift effect on hover */
+    transform: translateY(-5px);
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
 }
 
-/* --- Image and Source Area --- */
 .card-image-wrapper {
     position: relative;
     width: 100%;
-    /* Aspect ratio for the image: 3 parts height for every 4 parts width */
-    padding-top: 75%; 
+    padding-top: 75%;
     overflow: hidden;
 }
 
@@ -38,7 +35,7 @@
     position: absolute;
     bottom: 10px;
     left: 10px;
-    background-color: #cc0000; /* Matching news theme red */
+    background-color: #cc0000;
     color: #fff;
     padding: 4px 8px;
     border-radius: 4px;
@@ -48,10 +45,9 @@
     letter-spacing: 0.5px;
 }
 
-/* --- Content Area --- */
 .card-content {
     padding: 20px;
-    flex-grow: 1; /* Ensures content takes remaining space, pushing actions/meta down */
+    flex-grow: 1;
     display: flex;
     flex-direction: column;
 }
@@ -72,13 +68,11 @@
     margin-bottom: 15px;
     overflow: hidden;
     text-overflow: ellipsis;
-    /* transition: max-height 0.3s ease-out; */ /* Disabled due to potential height complexity in a grid */
 }
 
-/* Limit the height/lines for the collapsed state */
 .card-summary.collapsed {
     display: -webkit-box;
-    -webkit-line-clamp: 3; /* Show up to 3 lines in collapsed view */
+    -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
 }
 
@@ -90,16 +84,15 @@
     border-left: 2px solid #555;
     padding-left: 10px;
     font-style: italic;
-    white-space: pre-wrap; /* Respects line breaks from source content */
+    white-space: pre-wrap;
 }
 
-/* --- Metadata --- */
 .card-meta {
     display: flex;
     align-items: center;
     color: #888;
     font-size: 0.85rem;
-    margin-top: auto; /* Pushes the meta and actions to the bottom */
+    margin-top: auto;
 }
 
 .meta-icon {
@@ -107,7 +100,6 @@
     color: #cc0000;
 }
 
-/* --- Action Buttons (Expand/Source Link) --- */
 .card-actions {
     display: flex;
     justify-content: space-between;
@@ -129,7 +121,7 @@
     text-transform: uppercase;
     cursor: pointer;
     transition: background-color 0.2s ease, color 0.2s ease;
-    text-decoration: none; /* For the anchor tag */
+    text-decoration: none;
 }
 
 .toggle-details-btn {
@@ -152,9 +144,6 @@
     background-color: #e00000;
 }
 
-/* --- User Action Buttons (Existing Styles Integrated) --- */
-/* The styles for .card-user-actions and .user-action-btn are already included in your prompt, 
-   so they will follow the card actions area. */
 .card-user-actions {
   display: flex;
   gap: 10px;
@@ -181,27 +170,23 @@
   transition: all 0.2s ease;
 }
 
-/* Hover effect */
 .user-action-btn:hover:not(:disabled) {
   background-color: #383838;
   border-color: #cc0000;
   color: #cc0000;
 }
 
-/* Active state (when added to favorites or watch later) */
 .user-action-btn.active {
   background-color: #cc0000;
   border-color: #cc0000;
   color: #fff;
 }
 
-/* Disabled while loading */
 .user-action-btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
 
-/* --- Responsive Adjustments --- */
 @media (max-width: 600px) {
     .card-content {
         padding: 15px;
@@ -218,10 +203,9 @@
     }
 
     .user-action-btn span {
-        display: none; /* hide text on small screens for user actions */
+        display: none;
     }
 }
-
 
 .card-management-actions {
     padding: 15px 20px 20px;
@@ -231,7 +215,7 @@
 .remove-btn {
     width: 100%;
     padding: 10px;
-    background-color: #550000; /* Dark Red */
+    background-color: #550000;
     border: 1px solid #cc0000;
     color: #fff;
     border-radius: 4px;
@@ -242,5 +226,5 @@
 }
 
 .remove-btn:hover {
-    background-color: #cc0000; /* Brighten on hover */
+    background-color: #cc0000;
 }

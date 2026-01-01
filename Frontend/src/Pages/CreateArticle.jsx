@@ -10,7 +10,7 @@ const CreateArticle = () => {
     description: "",
     content: "",
     imageUrl: "", 
-    category: "", // Field collected but not sent to simplified ArticleCreate schema
+    category: "",
     source: "",
   })
   const [error, setError] = useState("")
@@ -57,16 +57,13 @@ const CreateArticle = () => {
     try {
       const token = localStorage.getItem("token")
 
-      // --- CRITICAL FIX: Cleaned and structured payload for FastAPI schema ---
       const articlePayload = {
         title: formData.title,
         description: formData.description,
         content: formData.content,
         image_url: formData.imageUrl, 
         source: formData.source, 
-        // FIX 1: Add required 'url' field (using image URL as proxy)
         url: formData.imageUrl, 
-        // FIX 2: Add 'published_at' field with current time (required by some schemas)
         published_at: new Date().toISOString(), 
       }
       
@@ -74,7 +71,6 @@ const CreateArticle = () => {
           throw new Error("User not authenticated.")
       }
 
-      // API Endpoint URL is correct: /api/admin/articles
       const response = await fetch("http://localhost:8000/api/admin/articles", { 
         method: "POST",
         headers: {
@@ -87,7 +83,6 @@ const CreateArticle = () => {
       const data = await response.json()
 
       if (!response.ok) {
-        // Improved error handling: extract specific message from validation errors
         const detail = data.detail;
         let errorMessage = "Failed to publish article";
 
@@ -95,15 +90,13 @@ const CreateArticle = () => {
             if (typeof detail === 'string') {
                 errorMessage = detail;
             } else if (Array.isArray(detail) && detail.length > 0) {
-                // Extracts the message from a typical 422 Unprocessable Entity response
                 errorMessage = `Validation Error: ${detail[0].loc.join('.')}: ${detail[0].msg}`;
             }
         }
-        
+
         throw new Error(errorMessage)
       }
 
-      // Clear form and navigate on success
       setFormData({
         title: "",
         description: "",

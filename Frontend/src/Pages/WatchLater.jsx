@@ -14,7 +14,6 @@ const WatchLater = () => {
 
   const API_BASE_URL = "http://localhost:8000"
 
-  // NEW DELETE HANDLER
   const handleRemoveWatchLater = async (watchLaterId) => {
     const token = localStorage.getItem("token")
     if (!token) return navigate("/login")
@@ -31,7 +30,6 @@ const WatchLater = () => {
             throw new Error("Failed to remove watch later item.")
         }
 
-        // OPTIMISTIC UI UPDATE: Remove the item from the state immediately
         setWatchLaterItems(prev => prev.filter(item => item.id !== watchLaterId))
         console.log(`Removed watch later ID: ${watchLaterId}`)
 
@@ -52,12 +50,11 @@ const WatchLater = () => {
         setLoading(true)
         setError(null)
 
-      // FIX: URL is correct: /api/watchlater/
-      const response = await fetch(`${API_BASE_URL}/api/watchlater/`, { 
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
+        const response = await fetch(`${API_BASE_URL}/api/watchlater/`, { 
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
 
         if (!response.ok) {
           throw new Error(`Failed to fetch watch later items: ${response.statusText}`)
@@ -65,7 +62,6 @@ const WatchLater = () => {
 
         const data = await response.json()
         
-        // CRITICAL FIX: The FastAPI endpoint returns the array directly
         setWatchLaterItems(Array.isArray(data) ? data : [])
 
       } catch (err) {
@@ -123,12 +119,11 @@ const WatchLater = () => {
             <section className="news-grid-section">
               <div className="news-grid">
                 {watchLaterItems.map((item) => (
-                  // Map over the saved item and use the nested article object for NewsCard
                   <NewsCard 
                     key={item.id} 
                     article={item.article} 
-                    onRemove={handleRemoveWatchLater} // Pass the delete handler
-                    savedItemId={item.id} // Pass the WatchLater ID
+                    onRemove={handleRemoveWatchLater}
+                    savedItemId={item.id}
                   />
                 ))}
               </div>
